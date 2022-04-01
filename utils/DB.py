@@ -1,9 +1,15 @@
 # connect to the database 'wordle_dbms'
 
+import sys
 import psycopg2
+
 from psycopg2 import Error
 
-def connectToWordle(_user, _password, _database) -> list:
+# custom imports
+from errors import handle_error
+
+
+def connect_to_wordle(_user, _password, _database) -> list:
     # First element is the connection, Second is the error
     # If connection is successful, we return [conn, None]
     # Else we return [None, error]
@@ -27,11 +33,9 @@ def connectToWordle(_user, _password, _database) -> list:
 
 
 # Example: kinda Go syntax hehe 
-conn, err = connectToWordle("admin", "admin", "wordle_dbms")
+conn, err = connect_to_wordle("admin", "admin", "wordle_dbms")
+handle_error(err)
 
-if err is not None:
-    print("Error ::->", err)
-else:
-    print("Connection successful")
-    conn.close()
-    print(conn)
+print("Connection successful")
+conn.close()
+print(conn)
