@@ -120,11 +120,11 @@ handle_error(err)
     
 #     print(ret)
 
-# num_inserted = insert_data(conn, "answers", "../data/answers.txt")
-# print("Inserted", num_inserted, "rows into the DataBase")
+num_inserted = insert_data(conn, "answers", "../data/answers.txt")
+print("Inserted", num_inserted, "rows into the DataBase")
 
-last_id = fetch_last_id(conn, "allowed")
+last_id = fetch_last_id(conn, "answers")
 print("Last inserted id is:", last_id)
 
-check_word = check_word_exists(conn, "allowed", "abbas")
+check_word = check_word_exists(conn, "answers", "abbas")
 print(check_word)
