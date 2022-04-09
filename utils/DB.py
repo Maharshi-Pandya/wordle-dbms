@@ -1,6 +1,8 @@
 # connect to the database 'wordle_dbms'
 
 import psycopg2
+import random
+
 from psycopg2 import Error
 
 # custom imports
@@ -52,6 +54,30 @@ def check_word_exists(conn, table, word) -> tuple:
     return (word_id, word_content)
 
 
+# Fetch any random word from the table
+def fetch_random_word(conn, table, max_id) -> tuple:
+    word_id, word_content = None, None
+    
+    # random id between (1, max_id) and check if it exists
+    rand_id = random.randrange(1, max_id + 1)
+    
+    try:
+        with conn.cursor() as cur:
+            rand_query = f"SELECT id, content FROM {table} WHERE id={rand_id};"
+            
+            # Execute and fetch
+            cur.execute(rand_query)
+            rq_tuple = cur.fetchone()
+            
+            if rq_tuple is not None:
+                word_id, word_content = rq_tuple
+            
+    except (Exception, Error) as error:
+        handle_error(error)
+
+    return (word_id, word_content)
+
+
 # Fetch the last entry's id from a table
 def fetch_last_id(conn, table) -> int:
     last_id = None
@@ -97,34 +123,15 @@ def insert_data(conn, table, datafile) -> int:
     return row_id
 
 
-# Example: kinda Go syntax hehe 
-conn, err = connect_to_wordle("admin", "admin", "wordle_dbms")
-handle_error(err)
+# # Testing... 
+# conn, err = connect_to_wordle("admin", "admin", "wordle_dbms")
+# handle_error(err)
 
-# print("Connection successful")
-# conn.close()
-# print(conn)
+# last_id = fetch_last_id(conn, "answers")
+# print("Last inserted id is:", last_id)
 
-# with conn.cursor() as cur:
-#     query = "SELECT max(id) FROM answers;"
-#     cur.execute(query)
-#     max_id = cur.fetchone()
-    
-#     print(max_id[0])
+# check_word = check_word_exists(conn, "answers", "abbas")
+# print(check_word)
 
-#     word = "hello"    
-#     query = f"SELECT * FROM answers WHERE content=\'{word}\';"
-#     cur.execute(query)
-    
-#     ret = cur.fetchone()
-    
-#     print(ret)
-
-num_inserted = insert_data(conn, "answers", "../data/answers.txt")
-print("Inserted", num_inserted, "rows into the DataBase")
-
-last_id = fetch_last_id(conn, "answers")
-print("Last inserted id is:", last_id)
-
-check_word = check_word_exists(conn, "answers", "abbas")
-print(check_word)
+# rand = fetch_random_word(conn, "answers", last_id)
+# print("Random word fetched: ", rand)
