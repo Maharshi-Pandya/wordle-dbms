@@ -6,7 +6,7 @@ import random
 from psycopg2 import Error
 
 # custom imports
-from errors import handle_error
+from .errors import handle_error
 
 
 # Try and connect to the wordle database
