@@ -8,3 +8,5 @@ w.make_answer()
 
 print(w._heading())
 print("Answer created:", w.answer, "\n")
+
+w.run()
