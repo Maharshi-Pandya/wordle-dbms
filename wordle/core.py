@@ -92,6 +92,7 @@ class WordleGame:
         self.answer = db.fetch_random_word(self.conn, "answers", last_id)
 
     def run(self):
+        done = False
         final_input = None
         while self.rem_turns > 0:
             # take user_input and clean it
@@ -103,8 +104,9 @@ class WordleGame:
                 
                 # when input is equal to answer
                 if word_to_check == self.answer[1]:
-                    print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\tYou guessed the wordle correctly! ✅\n\n")
-                    exit(0)
+                    print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\t✅ You guessed the wordle correctly!\n\n")
+                    done = True
+                    break
                 
                 # check for existence in both tables
                 check_word_alo = db.check_word_exists(self.conn, "allowed", word_to_check)
@@ -135,5 +137,6 @@ class WordleGame:
 
             self.rem_turns -= 1
             
-        print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\t❌ Nope, the answer was",
+        if not done:
+            print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\t❌ Nope, the answer was",
               colorama.Fore.RED + f"{self.answer[1]}" + colorama.Fore.RESET + "!\n\n")
