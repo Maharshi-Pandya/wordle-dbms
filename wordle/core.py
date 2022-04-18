@@ -8,6 +8,7 @@
 # Yellow color if the letter is in the word, but incorrect spot
 # Grey color if the letter is not in the word.
 
+from turtle import color
 import colorama
 
 import utils.DB as db
@@ -23,8 +24,8 @@ def not_none(tup) -> bool:
 
 
 # Take user input and clean it
-def input_and_clean():
-    word = input()
+def input_and_clean(guess_num):
+    word = input(f"\t\tEnter guess #{guess_num}: ")
     user_input = list(word)
         
     clean_input = []
@@ -34,6 +35,25 @@ def input_and_clean():
             
     return clean_input if len(clean_input) == 5 else None
     
+
+# Check closeness of word and answer
+def check_closeness(word, answer: str) -> list:
+    cn_list = []
+    
+    for i in range(len(word)):
+        curr = word[i]
+        cnt = answer.count(curr)
+        
+        if cnt > 0:
+            if word[i] == answer[i]:
+                cn_list.append(colorama.Back.GREEN)
+            else:
+                cn_list.append(colorama.Back.YELLOW)
+        else:
+            cn_list.append(colorama.Back.LIGHTBLACK_EX)
+            
+    return cn_list
+
 class WordleGame:
     def __init__(self) -> None:
         self.conn = None
@@ -56,10 +76,10 @@ class WordleGame:
 \t        `8.`8' `8,`'       ` 8888     ,88'   8 8888   `8b.   8 8888    ,o88P'   8 8888         8 8888         
 \t         `8.`   `8'           `8888888P'     8 8888     `88. 8 888888888P'      8 888888888888 8 888888888888\n\n\n
 \t        
-\t                                          INSIDE YOUR TERMINAL!
+\t                                         🚀 INSIDE YOUR TERMINAL! 🚀
     """
 
-        return colorama.Fore.YELLOW + heading
+        return colorama.Fore.GREEN + heading
     
     # Public: Attempt to connect to wordle db
     def make_connection(self, user, password, database):
@@ -72,23 +92,48 @@ class WordleGame:
         self.answer = db.fetch_random_word(self.conn, "answers", last_id)
 
     def run(self):
+        final_input = None
         while self.rem_turns > 0:
             # take user_input and clean it
-            clean_input = input_and_clean()        
+            final_input = input_and_clean(7 - self.rem_turns)        
             
-            if clean_input is not None:
+            if final_input is not None:
                 # check if the word exists in the DB
-                word_to_check = "".join(clean_input)
-                check_word = db.check_word_exists(self.conn, "allowed", word_to_check)
+                word_to_check = "".join(final_input)
                 
-                if not_none(check_word):
-                    word = check_word[1]
+                # when input is equal to answer
+                if word_to_check == self.answer[1]:
+                    print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\tYou guessed the wordle correctly! ✅\n\n")
+                    exit(0)
+                
+                # check for existence in both tables
+                check_word_alo = db.check_word_exists(self.conn, "allowed", word_to_check)
+                check_word_ans = db.check_word_exists(self.conn, "answers", word_to_check)
+                
+                input_word = None
+                if not_none(check_word_alo):
+                    input_word = check_word_alo
+                elif not_none(check_word_ans):
+                    input_word = check_word_ans
+                
+                if input_word is not None:
+                    word = input_word[1]
 
-                    # TODO: DO SOMETHING WITH THIS
-                    print(word)
+                    # TODO: Check how close is the word to the answer
+                    cn_list = check_closeness(word, self.answer[1])
+                    print("\n\t\t", end="")
+                    for i in range(len(word)):
+                        print(cn_list[i] + " " + word[i] + " ", end="")
+                    print("\n")
 
                 else:
-                    raise Exception(f"::-> The word '{word_to_check}' is not allowed as an input.")
+                    print(colorama.Fore.RED + f"\n\t\t::-> The word '{word_to_check}' is not allowed as an input.\n")
+                    continue
             else:
-                raise Exception("::-> Input should be of length 5 only.")
+                print(colorama.Fore.RED + "\n\t\t::-> Input should be of length 5 only.\n")
+                continue
+
             self.rem_turns -= 1
+            
+        print(colorama.Fore.YELLOW + "\n\n\t\t\t\t\t\t❌ Nope, the answer was",
+              colorama.Fore.RED + f"{self.answer[1]}" + colorama.Fore.RESET + "!\n\n")
