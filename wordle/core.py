@@ -59,11 +59,11 @@ class WordleGame:
         self.conn = None
         self.answer = (None, None)          # (id, content)
         self.rem_turns = 6
+        # necessary for colors
+        colorama.init(autoreset=True)
         
     # Private: ASCII heading to the screen
     def _heading(self):
-        # necessary
-        colorama.init(autoreset=True)
         heading = """                                                                                
 \t`8.`888b                 ,8'  ,o888888o.     8 888888888o.   8 888888888o.      8 8888         8 8888888888   
 \t `8.`888b               ,8'. 8888     `88.   8 8888    `88.  8 8888    `^888.   8 8888         8 8888         
@@ -80,6 +80,26 @@ class WordleGame:
     """
 
         return colorama.Fore.GREEN + heading
+    
+    
+    # The rules string to print
+    def _rules(self) -> str:
+        rule_heading = colorama.Fore.YELLOW + """
+        \tRules:
+        """
+        
+        rule_str = colorama.Fore.YELLOW + """
+        \t\t
+        \t💠 You have to guess the Wordle in six goes or less.
+        \t💠 Every word you enter must be in the word list.
+        \t💠 A correct letter turns green.
+        \t💠 A correct letter in the wrong place turns yellow.
+        \t💠 An incorrect letter turns gray.
+        \t💠 Letters can be used more than once.\n\n
+        """
+        
+        return rule_heading + rule_str
+        
     
     # Public: Attempt to connect to wordle db
     def make_connection(self, user, password, database):

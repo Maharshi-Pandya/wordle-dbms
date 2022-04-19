@@ -5,6 +5,7 @@ if __name__ == "__main__":
     # Init and run the game
     w = WordleGame()
     print(w._heading())
+    print(w._rules())
     w.make_connection("admin", "admin", "wordle_dbms")
     w.make_answer()
 
