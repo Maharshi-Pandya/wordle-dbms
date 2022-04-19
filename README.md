@@ -2,7 +2,7 @@
 
 A terminal based Wordle game for my university DBMS project. It uses **PostgreSQL** RDBMS.
 
-![image-20220419224827234](C:\Users\mahar\AppData\Roaming\Typora\typora-user-images\image-20220419224827234.png)
+![Wordle in terminal](C:\Users\mahar\Desktop\image-20220419224827234.png)
 
 
 
