@@ -127,11 +127,6 @@ def insert_data(conn, table, datafile) -> int:
 # conn, err = connect_to_wordle("admin", "admin", "wordle_dbms")
 # handle_error(err)
 
-# last_id = fetch_last_id(conn, "answers")
-# print("Last inserted id is:", last_id)
-
-# check_word = check_word_exists(conn, "answers", "abbas")
-# print(check_word)
-
-# rand = fetch_random_word(conn, "answers", last_id)
-# print("Random word fetched: ", rand)
+# # Insert the data into database
+# last_id_answers = insert_data(conn, "answers", "../data/answers.txt")
+# last_id_allowed = insert_data(conn, "allowed", "../data/allowed.txt")
